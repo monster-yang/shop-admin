@@ -36,7 +36,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 
 export default {
   data () {
@@ -65,7 +64,7 @@ export default {
           console.log('格式不正确')
           return false
         }
-        axios.post('http://localhost:8888/api/private/v1/login', this.loginForm).then(v => {
+        this.$axios.post('login', this.loginForm).then(v => {
           if (v.data.meta.status === 200) {
             console.log(v)
             localStorage.setItem('token', v.data.data.token)
@@ -91,7 +90,7 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
 .el-row {
   height: 100%;
   background-color: #2d494c;
