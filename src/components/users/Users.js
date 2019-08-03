@@ -63,23 +63,35 @@ export default {
     this.getUserData()
   },
   methods: {
-    getUserData (pagenum = 1, query = '') {
-      this.$axios
-        .get('users', {
-          params: {
-            query,
-            pagenum,
-            pagesize: 2
-          }
-          // headers: {
-          //   Authorization: localStorage.getItem('token')
-          // }
-        })
-        .then(v => {
-          this.userData = v.data.data.users
-          this.total = v.data.data.total
-          this.pagenum = v.data.data.pagenum
-        })
+    // 进页面请求数据
+    async getUserData (pagenum = 1, query = '') {
+      let config = {
+        params: {
+          query,
+          pagenum,
+          pagesize: 2
+        }
+      }
+      let v = await this.$axios.get('users', config)
+      this.userData = v.data.data.users
+      this.total = v.data.data.total
+      this.pagenum = v.data.data.pagenum
+      // this.$axios
+      //   .get('users', {
+      //     params: {
+      //       query,
+      //       pagenum,
+      //       pagesize: 2
+      //     }
+      //     // headers: {
+      //     //   Authorization: localStorage.getItem('token')
+      //     // }
+      //   })
+      //   .then(v => {
+      //     this.userData = v.data.data.users
+      //     this.total = v.data.data.total
+      //     this.pagenum = v.data.data.pagenum
+      //   })
     },
     // 点击分页 时传入页码 和input3
     change (page) {
@@ -96,31 +108,46 @@ export default {
     // 添加发送ajxa
     addUser () {
       // 校验拦截
-      this.$refs.dialogRef.validate(valid => {
+      this.$refs.dialogRef.validate(async valid => {
         // 不成功就拦截
         if (!valid) {
           console.log('格式不正确')
           return false
         }
-
-        this.$axios.post('users', this.adduserform).then(v => {
-          console.log(v)
-          if (v.data.meta.status === 201) {
-            this.dialogAddUserVisible = false
-            this.$message({
-              message: v.data.meta.msg,
-              type: 'success',
-              duration: 800
-            })
-            this.getUserData()
-          } else {
-            this.$message({
-              message: v.data.meta.msg,
-              type: 'success',
-              duration: 800
-            })
-          }
-        })
+        let v = await this.$axios.post('users', this.adduserform)
+        if (v.data.meta.status === 201) {
+          this.dialogAddUserVisible = false
+          this.$message({
+            message: v.data.meta.msg,
+            type: 'success',
+            duration: 800
+          })
+          this.getUserData()
+        } else {
+          this.$message({
+            message: v.data.meta.msg,
+            type: 'success',
+            duration: 800
+          })
+        }
+        // this.$axios.post('users', this.adduserform).then(v => {
+        //   console.log(v)
+        // if (v.data.meta.status === 201) {
+        //   this.dialogAddUserVisible = false
+        //   this.$message({
+        //     message: v.data.meta.msg,
+        //     type: 'success',
+        //     duration: 800
+        //   })
+        //   this.getUserData()
+        // } else {
+        //   this.$message({
+        //     message: v.data.meta.msg,
+        //     type: 'success',
+        //     duration: 800
+        //   })
+        // }
+        // })
       })
     },
     // add框消失动画结束事件closed 文档
@@ -128,31 +155,46 @@ export default {
       // ref绑定form表单resetFields()重置的方法
       this.$refs.dialogRef.resetFields()
     },
-    // 删除
-    delUser (id) {
-      this.$axios.delete(`users/${id}`).then(v => {
-        if (v.data.meta.status === 200) {
-          this.$message({
-            message: v.data.meta.msg,
-            type: 'success',
-            duration: 800
-          })
-          this.getUserData(this.pagenum)
-        }
-      })
-    },
-    // 开关状态改变
-    stateChange (row) {
-      const { id, mg_state: mgState } = row
-      // 传参不能是mg_state  上面是起别名
-      this.$axios.put(`users/${id}/state/${mgState}`).then(v => {
-        console.log(v, row)
+    // 删除 发ajax
+    async delUser (id) {
+      let v = await this.$axios.delete(`users/${id}`)
+      if (v.data.meta.status === 200) {
         this.$message({
           message: v.data.meta.msg,
           type: 'success',
           duration: 800
         })
+        this.getUserData(this.pagenum)
+      }
+      // this.$axios.delete(`users/${id}`).then(v => {
+      //   if (v.data.meta.status === 200) {
+      //     this.$message({
+      //       message: v.data.meta.msg,
+      //       type: 'success',
+      //       duration: 800
+      //     })
+      //     this.getUserData(this.pagenum)
+      //   }
+      // })
+    },
+    // 开关状态改变
+    async stateChange (row) {
+      const { id, mg_state: mgState } = row
+      // 传参不能是mg_state  上面是起别名
+      let v = await this.$axios.put(`users/${id}/state/${mgState}`)
+      this.$message({
+        message: v.data.meta.msg,
+        type: 'success',
+        duration: 800
       })
+      // this.$axios.put(`users/${id}/state/${mgState}`).then(v => {
+      //   console.log(v, row)
+      //   this.$message({
+      //     message: v.data.meta.msg,
+      //     type: 'success',
+      //     duration: 800
+      //   })
+      // })
     },
     // 弹出编辑用户对话框
     showEditUser (row) {
@@ -164,7 +206,7 @@ export default {
       this.edituserform.id = id
     },
     // 编辑用户 发ajax
-    editUser () {
+    async editUser () {
       // 校验拦截   必须在规则内
       // this.$refs.editRef.validate(valid => {
       //   // 不成功就拦截
@@ -175,20 +217,28 @@ export default {
 
       // })
       const { email, mobile, id } = this.edituserform
-      this.$axios
-        .put(`users/${id}`, {
-          email,
-          mobile
-        })
-        .then(v => {
-          this.$message({
-            message: v.data.meta.msg,
-            type: 'success',
-            duration: 800
-          })
-          this.dialogEditUserVisible = false
-          this.getUserData(this.pagenum)
-        })
+      let v = await this.$axios.put(`users/${id}`, { email, mobile })
+      this.$message({
+        message: v.data.meta.msg,
+        type: 'success',
+        duration: 800
+      })
+      this.dialogEditUserVisible = false
+      this.getUserData(this.pagenum)
+      // this.$axios
+      //   .put(`users/${id}`, {
+      //     email,
+      //     mobile
+      //   })
+      //   .then(v => {
+      //     this.$message({
+      //       message: v.data.meta.msg,
+      //       type: 'success',
+      //       duration: 800
+      //     })
+      //     this.dialogEditUserVisible = false
+      //     this.getUserData(this.pagenum)
+      //   })
     }
   }
 }

@@ -58,30 +58,48 @@ export default {
     }
   },
   methods: {
+    // 登录
     submitForm () {
-      this.$refs.loginForm.validate((valid) => {
+      this.$refs.loginForm.validate(async (valid) => {
         if (!valid) {
           console.log('格式不正确')
           return false
         }
-        this.$axios.post('login', this.loginForm).then(v => {
-          if (v.data.meta.status === 200) {
-            console.log(v)
-            localStorage.setItem('token', v.data.data.token)
-            this.$message({
-              message: '恭喜你，登录成功',
-              type: 'success',
-              duration: 800
-            })
-            this.$router.push('/home')
-          } else {
-            this.$message({
-              message: '很遗憾，登录失败',
-              type: 'error',
-              duration: 800
-            })
-          }
-        })
+        let v = await this.$axios.post('login', this.loginForm)
+        if (v.data.meta.status === 200) {
+          console.log(v)
+          localStorage.setItem('token', v.data.data.token)
+          this.$message({
+            message: '恭喜你，登录成功',
+            type: 'success',
+            duration: 800
+          })
+          this.$router.push('/home')
+        } else {
+          this.$message({
+            message: '很遗憾，登录失败',
+            type: 'error',
+            duration: 800
+          })
+        }
+        // this.$axios.post('login', this.loginForm).then(v => {
+        //   if (v.data.meta.status === 200) {
+        //     console.log(v)
+        //     localStorage.setItem('token', v.data.data.token)
+        //     this.$message({
+        //       message: '恭喜你，登录成功',
+        //       type: 'success',
+        //       duration: 800
+        //     })
+        //     this.$router.push('/home')
+        //   } else {
+        //     this.$message({
+        //       message: '很遗憾，登录失败',
+        //       type: 'error',
+        //       duration: 800
+        //     })
+        //   }
+        // })
       })
     },
     resetForm () {
