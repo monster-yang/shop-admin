@@ -4,9 +4,10 @@ import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import './assets/common.css'
+
 import axios from 'axios'
-axios.defaults.baseURL = 'http://localhost:8888/api/private/v1/'
 Vue.prototype.$axios = axios
+axios.defaults.baseURL = 'http://localhost:8888/api/private/v1/'
 // 请求拦截器  携带token
 axios.interceptors.request.use(
   function (config) {

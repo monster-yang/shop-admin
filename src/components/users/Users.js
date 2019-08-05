@@ -55,12 +55,20 @@ export default {
         email: '',
         mobile: '',
         id: 0
-      }
+      },
+      dialogAssignRoleVisible: false,
+      AssignRoleform: {
+        username: '',
+        id: 0,
+        rid: ''
+      },
+      roleData: []
     }
   },
 
   created () {
     this.getUserData()
+    this.loadRoleData()
   },
   methods: {
     // 进页面请求数据
@@ -239,6 +247,42 @@ export default {
       //     this.dialogEditUserVisible = false
       //     this.getUserData(this.pagenum)
       //   })
+    },
+    // 加载角色数据 发送ajax
+    async loadRoleData () {
+      let v = await this.$axios.get('roles')
+      this.roleData = v.data.data
+      console.log(this.roleData)
+    },
+    // show 对话框  发送ajax
+    async showAssignRole (row) {
+      this.dialogAssignRoleVisible = true
+      // this.AssignRoleform = row
+      // let id = row.id
+
+      const { username, id } = row
+      this.AssignRoleform.username = username
+      this.AssignRoleform.id = id
+
+      let v = await this.$axios.get(`users/${id}`)
+      console.log(v)
+      this.AssignRoleform.rid = v.data.data.rid === -1 ? '' : v.data.data.rid
+    },
+    async AssignRole () {
+      const { id, rid } = this.AssignRoleform
+      let v = await this.$axios.put(`users/${id}/role`, {
+        rid
+      })
+      console.log(v)
+      if (v.data.meta.status === 200) {
+        this.dialogAssignRoleVisible = false
+        this.$message({
+          message: v.data.meta.msg,
+          type: 'success',
+          duration: 800
+        })
+        this.loadRoleData(this.pagenum, this.input3)
+      }
     }
   }
 }

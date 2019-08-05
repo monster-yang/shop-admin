@@ -26,23 +26,21 @@
           text-color="#fff"
           active-text-color="#ffd04b"
         >
-          <el-submenu index="1">
+          <el-submenu
+            :index="v1.id+''"
+            v-for=' v1 in leftData'
+            :key=" v1.id"
+          >
             <template slot="title">
               <i class="el-icon-location"></i>
-              <span>用户管理</span>
+              <span>{{v1.authName}}</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="users">用户列表</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
-          <el-submenu index="2">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>权限管理</span>
-            </template>
-            <el-menu-item-group>
-              <el-menu-item index="roles">角色列表</el-menu-item>
-              <el-menu-item index="rights">权限列表</el-menu-item>
+              <el-menu-item
+                :index="'/'+v2.path"
+                v-for="v2 in v1.children"
+                :key="v2.id"
+              >{{v2.authName}}</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
 
@@ -57,7 +55,20 @@
 
 <script scoped>
 export default {
+  data () {
+    return {
+      leftData: []
+    }
+  },
+  created () {
+    this.renderLeft()
+  },
   methods: {
+    async renderLeft () {
+      let v = await this.$axios.get('menus')
+      console.log(v)
+      this.leftData = v.data.data
+    },
     async logout () {
       try {
         await this.$confirm('此操作将退出账户, 是否继续?', '提示', {
