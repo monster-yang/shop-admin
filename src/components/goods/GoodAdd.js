@@ -12,9 +12,9 @@ export default {
   data () {
     return {
       // 步骤条data
-      activeIndex: 3,
+      activeIndex: 1,
       // 导航条data
-      activeName: 'three',
+      activeName: 'one',
       // 表单data
       addGoodsForm: {
         goods_name: '',
@@ -109,7 +109,9 @@ export default {
         type: 'success',
         duration: 800
       })
-      this.$router.push('/goods')
+      if (v.data.meta.status === 201) {
+        this.$router.push('/goods')
+      }
     }
   }
 }

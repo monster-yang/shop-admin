@@ -10,7 +10,7 @@
           <h1 class="top">电商后台管理系统</h1>
         </el-col>
         <el-col :span="8">
-          <p>恭喜上海前端43期月薪50万<a
+          <p>恭喜上海前端43期月薪50万 <a
               @click.prevent='logout'
               href="#"
             >退出</a></p>
@@ -111,6 +111,12 @@ export default {
       //   })
     },
     gaoLiang () {
+      if (this.$router.path === '/goods-add') {
+        return '/goods'
+      }
+      if (this.$route.path.startsWith('/users')) {
+        return '/users'
+      }
       return this.$router.path
     }
   }

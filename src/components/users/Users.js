@@ -67,7 +67,8 @@ export default {
   },
 
   created () {
-    this.getUserData()
+    let page = this.$route.params.page
+    this.getUserData(page)
     this.loadRoleData()
   },
   methods: {
@@ -103,6 +104,7 @@ export default {
     },
     // 点击分页 时传入页码 和input3
     change (page) {
+      this.$router.push('/users/' + page)
       this.getUserData(page, this.input3)
     },
     // input输入框 默认找第一页的搜索内容

@@ -57,13 +57,13 @@
     </el-tab-pane>
     <!-- 商品内容 ---------------------------------- -->
 
-    <el-tab-pane name="three" label="商品内容">
+    <el-tab-pane name="three" label="商品内容" class="fa">
       <quill-editor
         v-model="addGoodsForm.goods_introduce"
         :options="editorOption"
       >
       </quill-editor>
-      <el-button type="primary" @click='addGoods'>确认</el-button>
+      <el-button type="primary" @click="addGoods">确认</el-button>
     </el-tab-pane>
   </el-tabs>
 </div>

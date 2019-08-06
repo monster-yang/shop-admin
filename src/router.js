@@ -1,14 +1,15 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-
+// CDN 首屏优化
 import Login from './components/login/Login.vue'
-import Home from './components/home/Home.vue'
-import Users from './components/users/Users.vue'
-import Roles from './components/roles/Roles.vue'
-import Rights from './components/rights/Rights.vue'
-import Categories from './components/categories/Categories.vue'
-import Goods from './components/goods/Goods.vue'
-import GoodsAdd from './components/goods/GoodsAdd.vue'
+// 异步处理
+const Home = () => import('./components/home/Home.vue')
+const Users = () => import('./components/users/Users.vue')
+const Roles = () => import('./components/roles/Roles.vue')
+const Rights = () => import('./components/rights/Rights.vue')
+const Categories = () => import('./components/categories/Categories.vue')
+const Goods = () => import('./components/goods/Goods.vue')
+const GoodsAdd = () => import('./components/goods/GoodsAdd.vue')
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -19,7 +20,7 @@ const router = new VueRouter({
       path: '/home',
       component: Home,
       children: [
-        { path: '/users', component: Users },
+        { path: '/users/:page?', component: Users },
         { path: '/roles', component: Roles },
         { path: '/rights', component: Rights },
         { path: '/categories', component: Categories },
